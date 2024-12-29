@@ -1,9 +1,17 @@
+import AuthRoute from "@/components/AuthRoute";
 import Layout from "@/views/Layout";
 import Login from "@/views/Login";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const routers = [
-  { path: "/", element: <Layout /> },
+  {
+    path: "/",
+    element: (
+      <AuthRoute>
+        <Layout />
+      </AuthRoute>
+    ),
+  },
   { path: "/login", element: <Login /> },
 ];
 

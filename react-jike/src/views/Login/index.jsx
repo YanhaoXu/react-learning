@@ -1,9 +1,23 @@
-import { Card, Form, Input, Button } from "antd";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Card, Form, Input, Button, message } from "antd";
+import { fetchLogin } from "@/store/modules/user";
 import "./index.scss";
 import logo from "@/assets/logo.png";
+
 export default function Login() {
-  const onFinish = (formValues) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const onFinish = async (formValues) => {
     console.log("formValues", formValues);
+
+    // 触发异步action fetchLogin
+    await dispatch(fetchLogin(formValues));
+    // 1. 跳转到首页
+    navigate("/");
+    // 2. 提示用户登录成功
+    message.success("登陆成功");
   };
 
   return (
@@ -13,7 +27,7 @@ export default function Login() {
         {/* 登录表单 */}
         <Form onFinish={onFinish}>
           <Form.Item
-            name="moblie"
+            name="mobile"
             validateTrigger={["onBlur"]}
             rules={[
               { required: true, message: "请输入手机号" },
@@ -23,7 +37,7 @@ export default function Login() {
             <Input size="large" placeholder="请输入手机号" />
           </Form.Item>
           <Form.Item
-            name="name"
+            name="code"
             validateTrigger={["onBlur"]}
             rules={[{ required: true, message: "请输入验证码" }]}
           >
