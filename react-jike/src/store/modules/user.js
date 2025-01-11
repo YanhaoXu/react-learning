@@ -1,5 +1,5 @@
-import { loginAPI } from "@/apis/user";
-import { getToken, setToken as _setToken } from "@/utils/token";
+import { loginAPI, getProfileAPI } from "@/apis/user";
+import { getToken, setToken as _setToken, removeToken } from "@/utils/token";
 import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
@@ -7,6 +7,7 @@ const userSlice = createSlice({
   // 数据状态
   initialState: {
     token: getToken() || "",
+    userInfo: {},
   },
   // 同步修改方法
   reducers: {
@@ -15,12 +16,20 @@ const userSlice = createSlice({
       // 存入本地
       _setToken(state.token);
     },
+    setUserInfo: (state, action) => {
+      state.userInfo = action.payload;
+    },
+    clearUserInfo: (state) => {
+      state.token = "";
+      state.userInfo = {};
+      removeToken();
+    },
   },
 });
 
 // 每个 case reducer 函数会生成对应的 Action createor
 // 解构出actionCreater
-const { setToken } = userSlice.actions;
+const { setToken, setUserInfo, clearUserInfo } = userSlice.actions;
 
 // 登录获取token异步方法封装
 const fetchLogin = (loginForm) => {
@@ -31,8 +40,15 @@ const fetchLogin = (loginForm) => {
     dispatch(setToken(res.data.token));
   };
 };
+// 获取用户信息
+const fetchUserInfo = () => {
+  return async (dispatch) => {
+    const res = await getProfileAPI();
+    dispatch(setUserInfo(res.data));
+  };
+};
 
-export { fetchLogin };
+export { fetchLogin, fetchUserInfo, clearUserInfo };
 
 //! 获取 & 导出 reducer函数
 export default userSlice.reducer;
